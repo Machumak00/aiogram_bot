@@ -26,7 +26,7 @@ async def enter_ip(message: types.Message, state: FSMContext):
         return
     async with state.proxy() as data:
         data['ip'] = message.text
-    await message.answer("Введите порт.", reply_markup=cancel_markup)
+    await message.answer("Введите порт.")
     await DosState.port.set()
 
 
@@ -39,8 +39,7 @@ async def enter_port(message: types.Message, state: FSMContext):
         return
     async with state.proxy() as data:
         data['port'] = message.text
-    await message.answer("Введите размер данных, которыми хотите провести атаку.\n",
-                         reply_markup=cancel_markup)
+    await message.answer("Введите размер данных, которыми хотите провести атаку.")
     await DosState.size.set()
 
 

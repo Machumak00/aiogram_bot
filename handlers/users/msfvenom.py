@@ -48,7 +48,7 @@ async def enter_ip(message: types.Message, state: FSMContext):
         return
     async with state.proxy() as data:
         data['ip'] = message.text
-    await message.answer("Введите порт.\n", reply_markup=cancel_markup)
+    await message.answer("Введите порт.\n")
     await MsfvenomState.port.set()
 
 
@@ -61,7 +61,7 @@ async def enter_port(message: types.Message, state: FSMContext):
         return
     async with state.proxy() as data:
         data['port'] = message.text
-    await message.answer("Введите имя файла.\n", reply_markup=cancel_markup)
+    await message.answer("Введите имя файла.\n")
     await MsfvenomState.file_name.set()
 
 
