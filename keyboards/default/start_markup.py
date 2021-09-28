@@ -4,14 +4,14 @@ start_markup = ReplyKeyboardMarkup(
     [
         [
             KeyboardButton(text="MSFvenom"),
-            KeyboardButton(text="Brute Force"),
-            KeyboardButton(text="Url Changer")
+            KeyboardButton(text="BruteForce"),
+            KeyboardButton(text="UrlChanger")
         ],
         [
             KeyboardButton(text="Nmap"),
             KeyboardButton(text="DoS"),
             KeyboardButton(text="SNAT"),
-            KeyboardButton(text="IP Sniff")
+            KeyboardButton(text="IpSniff")
         ],
     ],
     resize_keyboard=True

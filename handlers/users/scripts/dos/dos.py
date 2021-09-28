@@ -52,6 +52,7 @@ async def enter_size(message: types.Message, state: FSMContext):
         return
     async with state.proxy() as data:
         data['size'] = message.text
+    await message.answer("Скрипт выполняется...")
     await start_dos(message.from_user.id, data)
     await message.answer("Скрипт успешно выполнен. Возврат в главное меню.\n"
                          "Выберите эксплойт.", reply_markup=start_markup)

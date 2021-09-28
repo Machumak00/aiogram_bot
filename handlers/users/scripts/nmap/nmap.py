@@ -12,7 +12,8 @@ from utils.scripts.nmap.start_nmap import start_nmap
 @rate_limit(5, key='Nmap')
 @dp.message_handler(Text(equals=["Nmap"]))
 async def nmap_menu(message: types.Message):
-    await message.answer("Вы попали в Nmap меню.\nВведите IP-адрес.", reply_markup=cancel_markup)
+    await message.answer("Вы попали в Nmap меню.\n"
+                         "Введите IP-адрес.", reply_markup=cancel_markup)
     await NmapState.ip.set()
 
 
