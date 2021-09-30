@@ -78,9 +78,7 @@ async def enter_file_name(message: types.Message, state: FSMContext):
         await message.answer('Скрипт выполняется...')
         file_path = await start_msfvenom(message.from_user.id, data)
         file_path += '.exe' if data['system'] == 'windows' else '.apk'
-        logging.info(file_path)
         if os.path.isfile(file_path):
-            logging.info('ok')
             with open(file_path, 'rb') as file:
                 await message.answer_document(file)
             os.remove(file_path)
