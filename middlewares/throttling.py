@@ -9,7 +9,7 @@ from aiogram.utils.exceptions import Throttled
 
 
 class ThrottlingMiddleware(BaseMiddleware):
-    def __init__(self, limit=DEFAULT_RATE_LIMIT, key_prefix='antiflood_'):
+    def __init__(self, limit=DEFAULT_RATE_LIMIT, key_prefix='antiflood'):
         self.limit = limit
         self.prefix = key_prefix
         super(ThrottlingMiddleware, self).__init__()
@@ -32,13 +32,13 @@ class ThrottlingMiddleware(BaseMiddleware):
         msg = target.message if isinstance(target, types.CallbackQuery) else target
         delta = round(throttled.rate - throttled.delta, 2)
         if throttled.exceeded_count == 2:
-            await msg.reply(f"Вы выполняете слишком много попыток для запроса к {key}.\n"
-                            f"Попробуйте снова через {delta}")
+            await msg.reply(f"Вы выполняете слишком много попыток к этому запросу.\n"
+                            f"Попробуйте снова через {delta}.")
             return
         await asyncio.sleep(delta)
         thr = await dispatcher.check_key(key)
         if thr.exceeded_count == throttled.exceeded_count:
-            await msg.reply(f"Теперь я могу Вам отвечать на запрос {key}.")
+            await msg.reply(f"Теперь я могу Вам отвечать на этот запрос.")
 
     async def on_process_message(self, message, data):
         await self.throttle(message)

@@ -2,7 +2,7 @@ from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
 
-from keyboards.default import start_markup, cancel_markup
+from keyboards.default import start_markup, back_menu_markup
 from loader import dp
 from states import DosState
 from utils.misc import rate_limit
@@ -13,7 +13,7 @@ from utils.scripts.dos.start_dos import start_dos
 @dp.message_handler(Text(equals=["DoS"]))
 async def dos_menu(message: types.Message):
     await message.answer("Вы попали в DoS меню.\n"
-                         "Введите IP-адрес.", reply_markup=cancel_markup)
+                         "Введите IP-адрес.", reply_markup=back_menu_markup)
     await DosState.ip.set()
 
 

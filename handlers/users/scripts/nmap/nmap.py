@@ -2,7 +2,7 @@ from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
 
-from keyboards.default import start_markup, cancel_markup
+from keyboards.default import start_markup, back_menu_markup
 from loader import dp
 from states import NmapState
 from utils.misc import rate_limit
@@ -13,7 +13,7 @@ from utils.scripts.nmap.start_nmap import start_nmap
 @dp.message_handler(Text(equals=["Nmap"]))
 async def nmap_menu(message: types.Message):
     await message.answer("Вы попали в Nmap меню.\n"
-                         "Введите IP-адрес.", reply_markup=cancel_markup)
+                         "Введите IP-адрес.", reply_markup=back_menu_markup)
     await NmapState.ip.set()
 
 

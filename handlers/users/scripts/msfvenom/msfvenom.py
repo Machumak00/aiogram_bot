@@ -5,7 +5,7 @@ from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
 
-from keyboards.default import start_markup, cancel_markup
+from keyboards.default import start_markup, back_menu_markup
 from keyboards.default.scripts.msfvenom import choose_system_markup
 from loader import dp
 from states import MsfvenomState
@@ -35,7 +35,7 @@ async def enter_system(message: types.Message, state: FSMContext):
         return
     async with state.proxy() as data:
         data['system'] = message.text.lower()
-    await message.answer("Введите IP-адрес.", reply_markup=cancel_markup)
+    await message.answer("Введите IP-адрес.", reply_markup=back_menu_markup)
     await MsfvenomState.ip.set()
 
 

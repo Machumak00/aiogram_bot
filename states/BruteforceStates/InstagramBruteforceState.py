@@ -9,3 +9,4 @@ class InstagramBruteforceState(StatesGroup):
     password1 = State()
     password2_1 = State()
     password2_2 = State()
+    start_script = State()

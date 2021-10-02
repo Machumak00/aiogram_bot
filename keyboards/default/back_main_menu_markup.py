@@ -1,9 +1,9 @@
 from aiogram.types.reply_keyboard import ReplyKeyboardMarkup, KeyboardButton
 
-cancel_markup = ReplyKeyboardMarkup(
+back_menu_markup = ReplyKeyboardMarkup(
     [
         [
-            KeyboardButton(text="Отмена")
+            KeyboardButton(text="В главное меню")
         ]
     ],
     resize_keyboard=True

@@ -6,7 +6,7 @@ choose_bruteforce_markup = ReplyKeyboardMarkup(
             KeyboardButton(text="Instagram")
         ],
         [
-            KeyboardButton(text="Отмена")
+            KeyboardButton(text="В главное меню")
         ]
     ],
     resize_keyboard=True

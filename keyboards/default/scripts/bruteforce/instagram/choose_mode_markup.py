@@ -9,7 +9,8 @@ choose_mode_markup = ReplyKeyboardMarkup(
             KeyboardButton(text="3")
         ],
         [
-            KeyboardButton(text="Отмена")
+            KeyboardButton(text="Назад"),
+            KeyboardButton(text="В главное меню")
         ]
     ],
     resize_keyboard=True
