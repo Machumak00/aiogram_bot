@@ -3,15 +3,15 @@ from aiogram.types.reply_keyboard import ReplyKeyboardMarkup, KeyboardButton
 start_markup = ReplyKeyboardMarkup(
     [
         [
-            KeyboardButton(text="DoS"),
-            KeyboardButton(text="Brute Force"),
-            KeyboardButton(text="Nmap")
+            KeyboardButton(text="MSFvenom"),
+            KeyboardButton(text="BruteForce"),
+            KeyboardButton(text="UrlChanger")
         ],
         [
-            KeyboardButton(text="Url Changer"),
-            KeyboardButton(text="IP Sniff"),
+            KeyboardButton(text="Nmap"),
+            KeyboardButton(text="DoS"),
             KeyboardButton(text="SNAT"),
-            KeyboardButton(text="MSFvenom")
+            KeyboardButton(text="IpSniff")
         ],
     ],
     resize_keyboard=True

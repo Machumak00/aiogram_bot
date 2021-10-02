@@ -1,2 +1,9 @@
+# general project
 aiogram<3.0
 environs~=8.0.0
+
+# instagram bruteforce
+bs4
+future
+requests
+colorama

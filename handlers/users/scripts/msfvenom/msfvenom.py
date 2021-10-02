@@ -48,7 +48,7 @@ async def enter_ip(message: types.Message, state: FSMContext):
         return
     async with state.proxy() as data:
         data['ip'] = message.text
-    await message.answer("Введите порт.\n", reply_markup=cancel_markup)
+    await message.answer("Введите порт.\n")
     await MsfvenomState.port.set()
 
 
@@ -61,7 +61,7 @@ async def enter_port(message: types.Message, state: FSMContext):
         return
     async with state.proxy() as data:
         data['port'] = message.text
-    await message.answer("Введите имя файла.\n", reply_markup=cancel_markup)
+    await message.answer("Введите имя файла.\n")
     await MsfvenomState.file_name.set()
 
 
@@ -78,9 +78,7 @@ async def enter_file_name(message: types.Message, state: FSMContext):
         await message.answer('Скрипт выполняется...')
         file_path = await start_msfvenom(message.from_user.id, data)
         file_path += '.exe' if data['system'] == 'windows' else '.apk'
-        logging.info(file_path)
         if os.path.isfile(file_path):
-            logging.info('ok')
             with open(file_path, 'rb') as file:
                 await message.answer_document(file)
             os.remove(file_path)

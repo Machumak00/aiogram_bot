@@ -131,3 +131,5 @@ dmypy.json
 .env
 
 data/users/user_*
+!utils/scripts/bruteforce/instagram/lib
+!utils/scripts/bruteforce/instagram/lib/lib
