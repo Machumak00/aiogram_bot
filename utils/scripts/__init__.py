@@ -1,5 +1,4 @@
-from . import bruteforce
-from . import dos
+from . import bruteforce, dos
 from . import ip_sniff
 from . import nmap
 from . import snat

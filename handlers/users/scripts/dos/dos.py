@@ -6,7 +6,7 @@ from keyboards.default import start_markup, back_menu_markup
 from loader import dp
 from states import DosState
 from utils.misc import rate_limit
-from utils.scripts.dos.start_dos import start_dos
+from utils.scripts.dos import start_dos
 
 
 @rate_limit(5, key='DoS')
