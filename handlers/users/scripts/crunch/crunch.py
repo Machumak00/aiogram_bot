@@ -1,9 +1,6 @@
 import asyncio
-import logging
 import os
-from asyncio import sleep
 
-import aiogram.types
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
@@ -42,18 +39,13 @@ async def enter_bruteforce(message: types.Message, state: FSMContext):
                              reply_markup=back_menu_markup)
         await CrunchState.min_length.set()
     elif message.text == 'RckU':
-        await message.answer("Идёт загрузка файла. Пожалуйста, подождите...")
-        # Создать 3 файла, чтобы можно было загружать их пользователю. Эту хуету я оставлю пока что.
-        # Да и вообще надо куда-то сохранить, потому что можно будет большие файлы в дальнейшем на лету скидывать
-        #   пользователю
-        # number_of_files = 3
-        # users_path = os.path.dirname(os.path.abspath(utils.scripts.crunch.__file__)) + os.path.sep
-        # with open(users_path + 'rockyou.txt', 'r', encoding='utf-8', errors='ignore') as infp:
-        #     files = [open(users_path + '%d.txt' % i, 'w', encoding='utf-8', errors='ignore') for i in range(number_of_files)]
-        #     for i, line in enumerate(infp):
-        #         files[i % number_of_files].write(line)
-        #     for f in files:
-        #         f.close()
+        await message.answer("Идёт загрузка файлов. Пожалуйста, подождите...")
+        await CrunchState.download_files.set()
+        pass_path = os.path.dirname(os.path.abspath(utils.scripts.crunch.__file__)) + os.path.sep + 'rcku' + os.path.sep
+        files = [open(pass_path + '%d.txt' % i, 'r') for i in range(3)]
+        for file in files:
+            await message.answer_document(file)
+            file.close()
         await message.answer("Все файлы были загружены.")
         await CrunchState.crunch.set()
     elif message.text == 'В главное меню':
@@ -62,6 +54,11 @@ async def enter_bruteforce(message: types.Message, state: FSMContext):
                              "Выберите эксплойт.", reply_markup=start_markup)
     else:
         await message.answer("Неверный ввод. Попробуйте ещё раз.")
+
+
+@dp.message_handler(state=CrunchState.download_files)
+async def enter_password2_1(message: types.Message, state: FSMContext):
+    await message.answer("Подождите, файлы ещё загружаются.")
 
 
 @rate_limit(0.5)
@@ -113,8 +110,8 @@ async def enter_username(message: types.Message, state: FSMContext):
             await message.answer('Скрипт выполняется...')
             await CrunchState.start_script.set()
             tasks = [
-                script_wait_message(message),
-                start_crunch(message.from_user.id, state_data)
+                start_crunch(message.from_user.id, state_data),
+                script_wait_message(message)
             ]
             finished, unfinished = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
             for task in unfinished:
@@ -183,8 +180,8 @@ async def enter_mode(message: types.Message, state: FSMContext):
                     await message.answer('Скрипт выполняется...')
                     await CrunchState.start_script.set()
                     tasks = [
-                        script_wait_message(message),
-                        start_crunch(message.from_user.id, state_data)
+                        start_crunch(message.from_user.id, state_data),
+                        script_wait_message(message)
                     ]
                     finished, unfinished = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
                     for task in unfinished:

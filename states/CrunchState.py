@@ -3,6 +3,7 @@ from aiogram.dispatcher.filters.state import StatesGroup, State
 
 class CrunchState(StatesGroup):
     crunch = State()
+    download_files = State()
     pattern_length = State()
     symbols = State()
     min_length = State()
