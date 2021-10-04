@@ -1,4 +1,5 @@
 import asyncio
+import logging
 import os
 
 from aiogram import types
@@ -13,6 +14,7 @@ from states.CrunchState import CrunchState
 from utils.misc import rate_limit, script_wait_message
 from utils.misc.files import delete_directory_files
 from utils.scripts.crunch import start_crunch
+from utils.scripts.crunch.start_crunch import do_key_interrupt
 
 
 @rate_limit(0.5)
@@ -180,15 +182,26 @@ async def enter_mode(message: types.Message, state: FSMContext):
                     await message.answer('Скрипт выполняется...')
                     await CrunchState.start_script.set()
                     tasks = [
+                        do_key_interrupt(),
                         start_crunch(message.from_user.id, state_data),
                         script_wait_message(message)
                     ]
                     finished, unfinished = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
                     for task in unfinished:
                         task.cancel()
+                    for task in finished:
+                        if task.result() == True:
+                            logging.info('interrupt')
+                            await state.reset_state()
+                            await message.answer("Скрипт успешно выполнен.\n"
+                                                 "Возврат в главное меню. Выберите эксплойт.",
+                                                 reply_markup=start_markup)
+                            return
+                    await asyncio.sleep(5)
                     users_data_path = ''
                     for task in finished:
-                        users_data_path = task.result()
+                        if task.result() != True:
+                            users_data_path = task.result()
                     with open(users_data_path + os.path.sep + "passwords.txt") as f:
                         await message.answer_document(f)
                     delete_directory_files(users_data_path)

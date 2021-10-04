@@ -8,6 +8,11 @@ import data
 from utils.misc.files import create_dirs
 
 
+async def do_key_interrupt():
+    await asyncio.sleep(180)
+    return True
+
+
 async def start_crunch(user_id: int, crunch_data: FSMContextProxy):
     sep = os.path.sep
     users_data_path = os.path.dirname(os.path.abspath(data.users.__file__)) + \
