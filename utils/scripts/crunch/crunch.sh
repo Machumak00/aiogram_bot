@@ -1,3 +1,3 @@
 #!/bin/bash
 
-crunch $1 $2 $3 -b 500mb > $4
+crunch $1 $2 $3 > $4

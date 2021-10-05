@@ -3,20 +3,20 @@ import logging
 import os
 
 from aiogram.dispatcher.storage import FSMContextProxy
+from aiogram.types import Message
 
 import data
+from utils.misc import script_wait_message
 from utils.misc.files import create_dirs
 
 
 async def do_key_interrupt():
-    await asyncio.sleep(180)
+    await asyncio.sleep(1)
     return True
 
 
-async def start_crunch(user_id: int, crunch_data: FSMContextProxy):
+async def start_crunch(users_data_path: str, crunch_data: FSMContextProxy):
     sep = os.path.sep
-    users_data_path = os.path.dirname(os.path.abspath(data.users.__file__)) + \
-                      f"{sep}user_{user_id}{sep}scripts{sep}crunch"
     current_path = os.path.dirname(os.path.abspath(__file__))
     if crunch_data['is_template']:
         template_data = f"'-t {crunch_data['symbols']}'"

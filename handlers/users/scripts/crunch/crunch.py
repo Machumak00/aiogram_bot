@@ -1,11 +1,13 @@
 import asyncio
 import logging
 import os
+from os.path import sep
 
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
 
+import data
 import utils
 from keyboards.default import start_markup, back_menu_markup
 from keyboards.default.scripts.crunch import choose_crunch_markup
@@ -111,16 +113,24 @@ async def enter_username(message: types.Message, state: FSMContext):
             state_data['symbols'] = message.text
             await message.answer('Скрипт выполняется...')
             await CrunchState.start_script.set()
+            users_data_path = os.path.dirname(os.path.abspath(data.users.__file__)) + \
+                              f"{sep}user_{message.from_user.id}{sep}scripts{sep}crunch"
             tasks = [
+                do_key_interrupt(),
                 start_crunch(message.from_user.id, state_data),
                 script_wait_message(message)
             ]
             finished, unfinished = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
             for task in unfinished:
                 task.cancel()
-            users_data_path = ''
             for task in finished:
-                users_data_path = task.result()
+                if task.result() == True:
+                    await state.reset_state()
+                    await message.answer("Скрипт был прерван, слишком большой таймаут.\n"
+                                         "Возврат в главное меню. Выберите эксплойт.",
+                                         reply_markup=start_markup)
+                    delete_directory_files(users_data_path)
+                    return
             with open(users_data_path + os.path.sep + "passwords.txt") as f:
                 await message.answer_document(f)
             delete_directory_files(users_data_path)
@@ -181,9 +191,11 @@ async def enter_mode(message: types.Message, state: FSMContext):
                     state_data['max_length'] = message.text
                     await message.answer('Скрипт выполняется...')
                     await CrunchState.start_script.set()
+                    users_data_path = os.path.dirname(os.path.abspath(data.users.__file__)) + \
+                                      f"{sep}user_{message.from_user.id}{sep}scripts{sep}crunch"
                     tasks = [
                         do_key_interrupt(),
-                        start_crunch(message.from_user.id, state_data),
+                        start_crunch(users_data_path, state_data),
                         script_wait_message(message)
                     ]
                     finished, unfinished = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
@@ -191,17 +203,12 @@ async def enter_mode(message: types.Message, state: FSMContext):
                         task.cancel()
                     for task in finished:
                         if task.result() == True:
-                            logging.info('interrupt')
                             await state.reset_state()
-                            await message.answer("Скрипт успешно выполнен.\n"
+                            await message.answer("Скрипт был прерван, слишком большой таймаут.\n"
                                                  "Возврат в главное меню. Выберите эксплойт.",
                                                  reply_markup=start_markup)
+                            delete_directory_files(users_data_path)
                             return
-                    await asyncio.sleep(5)
-                    users_data_path = ''
-                    for task in finished:
-                        if task.result() != True:
-                            users_data_path = task.result()
                     with open(users_data_path + os.path.sep + "passwords.txt") as f:
                         await message.answer_document(f)
                     delete_directory_files(users_data_path)
@@ -217,5 +224,5 @@ async def enter_mode(message: types.Message, state: FSMContext):
 
 
 @dp.message_handler(state=CrunchState.start_script)
-async def enter_password2_1(message: types.Message, state: FSMContext):
+async def start_script(message: types.Message, state: FSMContext):
     await message.answer("Подождите, скрипт ещё выполняется.")
