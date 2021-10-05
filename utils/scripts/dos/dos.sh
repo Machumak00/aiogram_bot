@@ -1,3 +1,3 @@
 #!/bin/bash
 
-python3 byte-ddos.py $1 $2 $3
+python3 $1/byte-ddos.py $2 $3 $4

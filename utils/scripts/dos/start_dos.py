@@ -22,7 +22,7 @@ async def get_ping(message: Message, dos_data: FSMContextProxy):
 
 async def start_dos(dos_data: FSMContextProxy):
     current_path = os.path.dirname(os.path.abspath(__file__))
-    cmd = f"sh '{current_path}/dos.sh' {dos_data['ip']} {dos_data['port']} {dos_data['size']}"
+    cmd = f"sh '{current_path}/dos.sh' {current_path}/dos_lib {dos_data['ip']} {dos_data['port']} {dos_data['size']}"
     proc = await asyncio.create_subprocess_shell(
         cmd=cmd,
         stdout=asyncio.subprocess.PIPE,
