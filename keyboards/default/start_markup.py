@@ -10,6 +10,7 @@ start_markup = ReplyKeyboardMarkup(
         [
             KeyboardButton(text="Nmap"),
             KeyboardButton(text="DoS"),
+            KeyboardButton(text="Crunch"),
             # KeyboardButton(text="SNAT"),
             # KeyboardButton(text="IpSniff")
         ]

@@ -1,3 +1,4 @@
+import asyncio
 import os
 
 from aiogram import types
@@ -9,7 +10,7 @@ from keyboards.default import start_markup, back_menu_markup
 from keyboards.default.scripts.bruteforce import choose_bruteforce_markup, choose_files_count_markup, choose_mode_markup
 from loader import dp
 from states import InstagramBruteforceState
-from utils.misc import rate_limit
+from utils.misc import rate_limit, script_wait_message
 from utils.scripts.bruteforce.instagram import start_bruteforce_instagram
 
 
@@ -193,7 +194,13 @@ async def enter_password2_2(message: types.Message, state: FSMContext):
             await message.document.download(destination_file=user_path + 'file2.txt')
             await message.answer('Скрипт выполняется...')
             await InstagramBruteforceState.start_script.set()
-            await start_bruteforce_instagram(state_data)
+            tasks = [
+                start_bruteforce_instagram(state_data),
+                script_wait_message(message)
+            ]
+            finished, unfinished = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
+            for task in unfinished:
+                task.cancel()
             await state.reset_state()
             await message.answer("Скрипт успешно выполнен.\n"
                                  "Возврат в главное меню. Выберите эксплойт.", reply_markup=start_markup)
