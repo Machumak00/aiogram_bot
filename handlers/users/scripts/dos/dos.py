@@ -42,7 +42,7 @@ async def enter_ip(message: types.Message, state: FSMContext):
     if message.text == 'Назад':
         async with state.proxy() as state_data:
             state_data.pop('dos')
-        await message.answer("Вы вернулись назад.\nВыберите способ атаки.")
+        await message.answer("Вы вернулись назад.\nВыберите способ атаки.", reply_markup=choose_dos_markup)
         await DosState.dos.set()
     elif message.text == 'В главное меню':
         await state.reset_state()
