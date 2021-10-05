@@ -3,15 +3,12 @@ import logging
 import os
 
 from aiogram.dispatcher.storage import FSMContextProxy
-from aiogram.types import Message
 
-import data
-from utils.misc import script_wait_message
 from utils.misc.files import create_dirs
 
 
 async def do_key_interrupt():
-    await asyncio.sleep(1)
+    await asyncio.sleep(180)
     return True
 
 
