@@ -3,16 +3,26 @@ import logging
 import os.path
 
 from aiogram.dispatcher.storage import FSMContextProxy
-
-import data
-from utils.misc.files import create_dirs
+from aiogram.types import Message
 
 
-async def start_dos(user_id: int, dos_data: FSMContextProxy):
-    users_data_path = os.path.dirname(os.path.abspath(data.users.__file__)) + f"/user_{user_id}/scripts/dos"
+async def get_ping(message: Message, dos_data: FSMContextProxy):
     current_path = os.path.dirname(os.path.abspath(__file__))
-    cmd = f"sh '{current_path}/dos.sh' '{users_data_path}' {dos_data['ip']} {dos_data['port']} {dos_data['size']}"
-    create_dirs(users_data_path)
+    msg = await message.answer(f"Текущее состояние пакетов по данному IP-адресу:")
+    while True:
+        cmd = f"sh '{current_path}/ping.sh' {dos_data['ip']}"
+        proc = await asyncio.create_subprocess_shell(
+            cmd=cmd,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE
+        )
+        stdout, stderr = await proc.communicate()
+        await msg.edit_text(f"Текущее состояние пакетов по данному IP-адресу:\n{stdout.decode()}")
+
+
+async def start_dos(dos_data: FSMContextProxy):
+    current_path = os.path.dirname(os.path.abspath(__file__))
+    cmd = f"sh '{current_path}/dos.sh' {dos_data['ip']} {dos_data['port']} {dos_data['size']}"
     proc = await asyncio.create_subprocess_shell(
         cmd=cmd,
         stdout=asyncio.subprocess.PIPE,

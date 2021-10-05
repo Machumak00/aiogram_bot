@@ -1,3 +1,3 @@
 #!/bin/bash
 
-echo "IP: $2, PORT: $3, SIZE: $4" > $1/dos.txt
+python3 byte-ddos.py $1 $2 $3
