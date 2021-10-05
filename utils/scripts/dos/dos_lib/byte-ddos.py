@@ -60,7 +60,7 @@ try:
     ip = arguments.ip
     port = arguments.port
     size = int(arguments.bytes)
-    attack = random.randbytes(int(size))
+    attack = int(random.randbytes(int(size)))
     print(" ")
     print("Lunching Attack")
     print(" ")
