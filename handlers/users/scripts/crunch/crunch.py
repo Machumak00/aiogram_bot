@@ -117,7 +117,7 @@ async def enter_username(message: types.Message, state: FSMContext):
                               f"{sep}user_{message.from_user.id}{sep}scripts{sep}crunch"
             tasks = [
                 do_key_interrupt(),
-                start_crunch(message.from_user.id, state_data),
+                start_crunch(users_data_path, state_data),
                 script_wait_message(message)
             ]
             finished, unfinished = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
