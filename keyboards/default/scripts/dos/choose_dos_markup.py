@@ -1,7 +1,11 @@
 from aiogram.types.reply_keyboard import ReplyKeyboardMarkup, KeyboardButton
 
-back_main_menu_markup = ReplyKeyboardMarkup(
+choose_dos_markup = ReplyKeyboardMarkup(
     [
+        [
+            KeyboardButton(text="DoS"),
+            KeyboardButton(text="DoS через Nmap")
+        ],
         [
             KeyboardButton(text="В главное меню")
         ]
