@@ -59,7 +59,10 @@ async def enter_dos(message: types.Message, state: FSMContext):
         if int(message.text) in range(1, 11):
             async with state.proxy() as state_data:
                 state_data['count_script'] = message.text
-            await message.answer("Введите ip.")
+                if state_data['dos'] == 'DoS':
+                    await message.answer("Введите IP.")
+                else:
+                    await message.answer("Введите IP или URL.")
             await DosState.ip.set()
         else:
             await message.answer("Неверное число. Попробуйте ещё раз.")

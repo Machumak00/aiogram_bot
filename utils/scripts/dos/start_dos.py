@@ -1,5 +1,4 @@
 import asyncio
-import logging
 import os.path
 
 from aiogram.dispatcher.storage import FSMContextProxy
@@ -27,6 +26,7 @@ async def get_ping(message: Message, dos_data: FSMContextProxy):
         stdout, stderr = await proc.communicate()
         await msg.edit_text(f"Текущее состояние пакетов по данному IP-адресу:\n{stdout.decode()}\n\n"
                             f"Количество обновлений: {i}")
+
 
 async def start_dos(connect, ip: str, port: int, attack: bytes):
     while True:
