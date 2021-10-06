@@ -1,3 +1,3 @@
 #!/bin/bash
 
-ping $1 -w1
+ping $1 -w2
