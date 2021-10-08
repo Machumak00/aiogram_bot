@@ -1,3 +1,3 @@
 #!/bin/bash
 
-nmap -Pn $1
+nmap $1
