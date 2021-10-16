@@ -1,8 +1,8 @@
-from . import bruteforce, dos
+from . import bruteforce, ddos
 from . import ip_sniff
-from . import nmap
+from . import nmapscan
 from . import snat
 from . import url_changer
-from . import msfvenom
+from . import metasploit
 
-__all__ = ['bruteforce', 'dos', 'ip_sniff', 'nmap', 'snat', 'url_changer', 'msfvenom']
+__all__ = ['bruteforce', 'ddos', 'ip_sniff', 'nmapscan', 'snat', 'url_changer', 'metasploit']

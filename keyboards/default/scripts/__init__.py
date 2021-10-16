@@ -1,1 +1,1 @@
-from . import msfvenom
+from . import metasploit

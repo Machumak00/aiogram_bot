@@ -15,7 +15,7 @@ from utils.scripts.bruteforce.instagram import start_bruteforce_instagram
 
 
 @rate_limit(0.5)
-@dp.message_handler(Text(equals=["BruteForce"]))
+@dp.message_handler(Text(equals=["Bruteforce"]))
 async def bruteforce_menu(message: types.Message):
     await message.answer("Вы попали в BruteForce меню.\n"
                          "Выберите, что хотите взломать.", reply_markup=choose_bruteforce_markup)
