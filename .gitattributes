@@ -1,1 +1,2 @@
 utils/scripts/crunch/rcku/*.txt filter=lfs diff=lfs merge=lfs -text
+utils/scripts/nmap/vulscan/*.csv filter=lfs diff=lfs merge=lfs -text
