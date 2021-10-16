@@ -1,2 +1,13 @@
 utils/scripts/passgen/rcku/*.txt filter=lfs diff=lfs merge=lfs -text
 utils/scripts/nmapscan/vulscan/*.csv filter=lfs diff=lfs merge=lfs -text
+utils/scripts/passgen/rcku/0.txt filter=lfs diff=lfs merge=lfs -text
+utils/scripts/passgen/rcku/1.txt filter=lfs diff=lfs merge=lfs -text
+utils/scripts/passgen/rcku/2.txt filter=lfs diff=lfs merge=lfs -text
+utils/scripts/nmapscan/vulscan/securityfocus.csv filter=lfs diff=lfs merge=lfs -text
+utils/scripts/nmapscan/vulscan/securitytracker.csv filter=lfs diff=lfs merge=lfs -text
+utils/scripts/nmapscan/vulscan/xforce.csv filter=lfs diff=lfs merge=lfs -text
+utils/scripts/nmapscan/vulscan/cve.csv filter=lfs diff=lfs merge=lfs -text
+utils/scripts/nmapscan/vulscan/exploitdb.csv filter=lfs diff=lfs merge=lfs -text
+utils/scripts/nmapscan/vulscan/openvas.csv filter=lfs diff=lfs merge=lfs -text
+utils/scripts/nmapscan/vulscan/osvdb.csv filter=lfs diff=lfs merge=lfs -text
+utils/scripts/nmapscan/vulscan/scipvuldb.csv filter=lfs diff=lfs merge=lfs -text
