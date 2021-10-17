@@ -67,18 +67,18 @@ async def enter_dos(message: types.Message, state: FSMContext):
             await PaPackDdosHpingState.stop_script.set()
             proc = await start_script(cmd)
             await message.answer("Для остановки скрипта введите STOP.", reply_markup=stop_script_markup)
-            task1 = asyncio.create_task(stop_script(proc), name='stop_script')
+            task1 = asyncio.create_task(stop_script(), name='stop_script')
             task2 = asyncio.create_task(communicate_script(cmd, proc), name='communicate_script')
             tasks = [task1, task2]
             finished, unfinished = await asyncio.wait(tasks, timeout=600, return_when=asyncio.FIRST_COMPLETED)
             check = False
             if len(unfinished) == 2:
                 check = True
-                os.kill(proc.pid, signal.SIGTERM)
+                os.kill(proc.pid, signal.SIGKILL)
             for task in unfinished:
                 if task.get_name() == 'stop_script' and not check:
                     check = True
-                    os.kill(proc.pid, signal.SIGTERM)
+                    os.kill(proc.pid, signal.SIGKILL)
                 task.cancel()
             if check:
                 await message.answer("Скрипт был успешно выполнен.")
@@ -161,18 +161,18 @@ async def enter_dos(message: types.Message, state: FSMContext):
             await PaPackDdosHpingState.stop_script.set()
             proc = await start_script(cmd)
             await message.answer("Для остановки скрипта введите STOP.", reply_markup=stop_script_markup)
-            task1 = asyncio.create_task(stop_script(proc), name='stop_script')
+            task1 = asyncio.create_task(stop_script(), name='stop_script')
             task2 = asyncio.create_task(communicate_script(cmd, proc), name='communicate_script')
             tasks = [task1, task2]
             finished, unfinished = await asyncio.wait(tasks, timeout=600, return_when=asyncio.FIRST_COMPLETED)
             check = False
             if len(unfinished) == 2:
                 check = True
-                os.kill(proc.pid, signal.SIGTERM)
+                os.kill(proc.pid, signal.SIGKILL)
             for task in unfinished:
                 if task.get_name() == 'stop_script' and not check:
                     check = True
-                    os.kill(proc.pid, signal.SIGTERM)
+                    os.kill(proc.pid, signal.SIGKILL)
                 task.cancel()
             if check:
                 await message.answer("Скрипт был успешно выполнен.")
