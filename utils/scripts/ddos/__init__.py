@@ -1,3 +1,3 @@
-from .start_ddos import start_dos
-from .start_nmap_for_ddos import start_nmap
-from .start_ddos import get_ping
+from . import ddos_hping
+from . import scddos_url
+from .manipulate_script import communicate_script, start_script

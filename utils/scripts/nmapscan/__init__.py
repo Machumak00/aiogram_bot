@@ -1,3 +1,1 @@
-from . import start_nmapscan
-
-__all__ = ['start_nmapscan.py']
+from .start_nmapscan import start_nmap

@@ -7,7 +7,8 @@ from aiogram.dispatcher.filters import Text
 
 import data
 from keyboards.default import start_markup, back_menu_markup
-from keyboards.default.scripts.bruteforce import choose_bruteforce_markup, choose_files_count_markup, choose_mode_markup
+from keyboards.default.scripts.bruteforce import choose_bruteforce_markup
+from keyboards.default.scripts.bruteforce.instagram import choose_mode_markup, choose_files_count_markup
 from loader import dp
 from states import InstagramBruteforceState
 from utils.misc import rate_limit, script_wait_message

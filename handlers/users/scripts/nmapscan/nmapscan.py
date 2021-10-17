@@ -1,5 +1,3 @@
-import re
-
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
@@ -13,9 +11,9 @@ from utils.scripts.nmapscan.start_nmapscan import start_nmap
 
 
 @rate_limit(0.5)
-@dp.message_handler(Text(equals=["Nmapscan"]))
+@dp.message_handler(Text(equals=["NmapScan"]))
 async def nmap_menu(message: types.Message):
-    await message.answer("Вы попали в Nmapscan меню.\n"
+    await message.answer("Вы попали в NmapScan меню.\n"
                          "Выберите разновидность Nmapscan.", reply_markup=choose_nmapscan_markup)
     await NmapscanState.nmapscan.set()
 
@@ -31,7 +29,7 @@ async def choose_nmap(message: types.Message, state: FSMContext):
         async with state.proxy() as data:
             data['nmapscan'] = message.text.lower()
         if message.text == 'NmapscanCustom':
-            await message.answer("Введите доступные команды из списка:"
+            await message.answer("Введите доступные команды из списка:\n"
                                  "[-p, -Pn, -sV, -sS, -A, -O, -F, --open]", reply_markup=back_menu_markup)
             await NmapscanState.custom_args.set()
         else:
@@ -99,7 +97,7 @@ async def enter_ip(message: types.Message, state: FSMContext):
                     await message.answer("Найденные уязвимости:")
                     if len(stdout_decoded) > 4096:
                         for symbols_count in range(0, len(stdout_decoded), 4096):
-                            await message.answer(stdout_decoded[symbols_count:symbols_count+4096],
+                            await message.answer(stdout_decoded[symbols_count:symbols_count + 4096],
                                                  disable_web_page_preview=True)
                     else:
                         await message.answer(stdout_decoded)
@@ -110,6 +108,7 @@ async def enter_ip(message: types.Message, state: FSMContext):
         await message.answer("Скрипт успешно выполнен.\n"
                              "Возврат в главное меню. Выберите эксплойт.", reply_markup=start_markup)
         await state.reset_state()
+
 
 @dp.message_handler(state=NmapscanState.start_script)
 async def start_script(message: types.Message, state: FSMContext):

