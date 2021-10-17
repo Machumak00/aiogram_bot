@@ -65,6 +65,8 @@ async def enter_dos(message: types.Message, state: FSMContext):
             async with state.proxy() as state_data:
                 script_path = os.path.dirname(os.path.abspath(utils.scripts.ddos.ddos_hping.syn_pack.__file__))
                 cmd = f"sh '{script_path}/start_standard.sh' {state_data['ip']}"
+                system_command = f"sudo kill $(ps aux | grep '[h]ping3 -c 15000 -d 500 -S -p 80 --flood {state_data['ip']}'" \
+                                 + " | awk '{print $2}')"
             await SynPackDdosHpingState.stop_script.set()
             proc = await start_script(cmd)
             await message.answer("Для остановки скрипта введите STOP.", reply_markup=stop_script_markup)
@@ -75,11 +77,12 @@ async def enter_dos(message: types.Message, state: FSMContext):
             check = False
             if len(unfinished) == 2:
                 check = True
-                os.killpg(os.getpgid(proc.pid), signal.SIGTERM)
+                os.system(system_command)
             for task in unfinished:
-                if task.get_name() == 'stop_script' and not check:
+                if task.get_name() == 'communicate_script' and not check:
+                    os.system(system_command)
+                if task.get_name() == 'stop_script':
                     check = True
-                    os.killpg(os.getpgid(proc.pid), signal.SIGTERM)
                 task.cancel()
             if check:
                 await message.answer("Скрипт был успешно выполнен.")
@@ -159,6 +162,9 @@ async def enter_dos(message: types.Message, state: FSMContext):
                 script_path = os.path.dirname(os.path.abspath(utils.scripts.ddos.ddos_hping.syn_pack.__file__))
                 cmd = f"sh '{script_path}/start_custom.sh' {state_data['packages_count']} {state_data['bytes_count']} " \
                       f"{state_data['port']} {state_data['ip']}"
+                system_command = f"sudo kill $(ps aux | grep '[h]ping3 -c {state_data['packages_count']} -d " \
+                                 f"{state_data['bytes_count']} -S -p {state_data['port']} --flood {state_data['ip']}'" \
+                                 + " | awk '{print $2}')"
             await SynPackDdosHpingState.stop_script.set()
             proc = await start_script(cmd)
             await message.answer("Для остановки скрипта введите STOP.", reply_markup=stop_script_markup)
@@ -169,11 +175,12 @@ async def enter_dos(message: types.Message, state: FSMContext):
             check = False
             if len(unfinished) == 2:
                 check = True
-                os.killpg(os.getpgid(proc.pid), signal.SIGTERM)
+                os.system(system_command)
             for task in unfinished:
-                if task.get_name() == 'stop_script' and not check:
+                if task.get_name() == 'communicate_script' and not check:
+                    os.system(system_command)
+                if task.get_name() == 'stop_script':
                     check = True
-                    os.killpg(os.getpgid(proc.pid), signal.SIGTERM)
                 task.cancel()
             if check:
                 await message.answer("Скрипт был успешно выполнен.")

@@ -7,7 +7,7 @@ async def start_script(cmd: str):
     proc = await asyncio.create_subprocess_shell(
         cmd=cmd,
         stdout=asyncio.subprocess.PIPE,
-        stderr=asyncio.subprocess.PIPE
+        stderr=asyncio.subprocess.PIPE,
     )
     return proc
 
