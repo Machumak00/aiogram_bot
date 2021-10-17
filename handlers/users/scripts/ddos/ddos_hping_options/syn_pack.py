@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import os
+import signal
 
 from aiogram import types
 from aiogram.dispatcher import FSMContext
@@ -74,11 +75,11 @@ async def enter_dos(message: types.Message, state: FSMContext):
             check = False
             if len(unfinished) == 2:
                 check = True
-                proc.kill()
+                proc.terminate()
             for task in unfinished:
-                if task.get_name() == 'stop_script':
+                if task.get_name() == 'stop_script' and not check:
                     check = True
-                    proc.kill()
+                    proc.terminate()
                 task.cancel()
             if check:
                 await message.answer("Скрипт был успешно выполнен.")
@@ -168,11 +169,11 @@ async def enter_dos(message: types.Message, state: FSMContext):
             check = False
             if len(unfinished) == 2:
                 check = True
-                proc.kill()
+                os.kill(proc.pid, signal.SIGTERM)
             for task in unfinished:
-                if task.get_name() == 'stop_script':
+                if task.get_name() == 'stop_script' and not check:
                     check = True
-                    proc.kill()
+                    os.kill(proc.pid, signal.SIGTERM)
                 task.cancel()
             if check:
                 await message.answer("Скрипт был успешно выполнен.")
