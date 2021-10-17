@@ -75,11 +75,11 @@ async def enter_dos(message: types.Message, state: FSMContext):
             check = False
             if len(unfinished) == 2:
                 check = True
-                os.kill(proc.pid, signal.SIGKILL)
+                os.killpg(os.getpgid(proc.pid), signal.SIGTERM)
             for task in unfinished:
                 if task.get_name() == 'stop_script' and not check:
                     check = True
-                    os.kill(proc.pid, signal.SIGKILL)
+                    os.killpg(os.getpgid(proc.pid), signal.SIGTERM)
                 task.cancel()
             if check:
                 await message.answer("Скрипт был успешно выполнен.")
@@ -169,11 +169,11 @@ async def enter_dos(message: types.Message, state: FSMContext):
             check = False
             if len(unfinished) == 2:
                 check = True
-                os.kill(proc.pid, signal.SIGKILL)
+                os.killpg(os.getpgid(proc.pid), signal.SIGTERM)
             for task in unfinished:
                 if task.get_name() == 'stop_script' and not check:
                     check = True
-                    os.kill(proc.pid, signal.SIGKILL)
+                    os.killpg(os.getpgid(proc.pid), signal.SIGTERM)
                 task.cancel()
             if check:
                 await message.answer("Скрипт был успешно выполнен.")
