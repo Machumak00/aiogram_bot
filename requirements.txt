@@ -1,9 +1,10 @@
 # general project
 aiogram<3.0
 environs~=8.0.0
+beautifulsoup4~=4.10.0
 
 # instagram bruteforce
-bs4
+bs4~=0.0.1
 future
-requests
-colorama
+requests~=2.25.1
+colorama~=0.4.4

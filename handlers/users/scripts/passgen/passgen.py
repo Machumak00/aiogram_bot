@@ -1,5 +1,4 @@
 import asyncio
-import logging
 import os
 from os.path import sep
 
@@ -15,12 +14,12 @@ from loader import dp
 from states.PassgenState import PassgenState
 from utils.misc import rate_limit, script_wait_message
 from utils.misc.files import delete_directory_files
-from utils.scripts.passgen import start_crunch
+from utils.scripts.passgen import start_passgen
 from utils.scripts.passgen.start_passgen import do_key_interrupt
 
 
 @rate_limit(0.5)
-@dp.message_handler(Text(equals=["Crunch"]))
+@dp.message_handler(Text(equals=["PassGen"]))
 async def crunch_menu(message: types.Message):
     await message.answer("Вы попали в Crunch меню.\n"
                          "Введите способ генерации пароля.", reply_markup=choose_passgen_markup)
@@ -45,7 +44,8 @@ async def enter_bruteforce(message: types.Message, state: FSMContext):
     elif message.text == 'RckU':
         await message.answer("Идёт загрузка файлов. Пожалуйста, подождите...")
         await PassgenState.download_files.set()
-        pass_path = os.path.dirname(os.path.abspath(utils.scripts.crunch.__file__)) + os.path.sep + 'rcku' + os.path.sep
+        pass_path = os.path.dirname(
+            os.path.abspath(utils.scripts.passgen.__file__)) + os.path.sep + 'rcku' + os.path.sep
         files = [open(pass_path + '%d.txt' % i, 'r') for i in range(3)]
         for file in files:
             await message.answer_document(file)
@@ -117,7 +117,7 @@ async def enter_username(message: types.Message, state: FSMContext):
                               f"{sep}user_{message.from_user.id}{sep}scripts{sep}passgen"
             tasks = [
                 do_key_interrupt(),
-                start_crunch(users_data_path, state_data),
+                start_passgen(users_data_path, state_data),
                 script_wait_message(message)
             ]
             finished, unfinished = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
@@ -195,7 +195,7 @@ async def enter_mode(message: types.Message, state: FSMContext):
                                       f"{sep}user_{message.from_user.id}{sep}scripts{sep}passgen"
                     tasks = [
                         do_key_interrupt(),
-                        start_crunch(users_data_path, state_data),
+                        start_passgen(users_data_path, state_data),
                         script_wait_message(message)
                     ]
                     finished, unfinished = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)

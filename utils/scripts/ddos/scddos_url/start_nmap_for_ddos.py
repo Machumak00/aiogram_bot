@@ -10,7 +10,7 @@ import utils
 
 
 async def start_nmap(message: Message, nmap_data: FSMContextProxy):
-    current_path = os.path.dirname(os.path.abspath(utils.scripts.nmap.__file__))
+    current_path = os.path.dirname(os.path.abspath(utils.scripts.nmapscan.__file__))
     cmd = f"sh '{current_path}/nmapscan.sh' {nmap_data['ip']}"
     proc = await asyncio.create_subprocess_shell(
         cmd=cmd,

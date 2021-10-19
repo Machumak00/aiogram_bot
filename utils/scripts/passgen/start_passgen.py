@@ -12,7 +12,7 @@ async def do_key_interrupt():
     return True
 
 
-async def start_crunch(users_data_path: str, crunch_data: FSMContextProxy):
+async def start_passgen(users_data_path: str, crunch_data: FSMContextProxy):
     sep = os.path.sep
     current_path = os.path.dirname(os.path.abspath(__file__))
     if crunch_data['is_template']:

@@ -6,7 +6,7 @@ from loader import dp
 from utils.misc import rate_limit
 
 
-@rate_limit(3, key='/start')
+@rate_limit(0.5)
 @dp.message_handler(CommandStart())
 async def start(message: types.Message):
     await message.answer(text="Добро пожаловать в стартовое меню.\n"
